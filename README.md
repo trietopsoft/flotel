@@ -8,7 +8,7 @@ Simple method with OK status:
 
 ```javascript
 {
-  let span = Spans.startSpan(tracer);
+  let span = Spans.startSpan(tracer, 'simple');
   // do stuff
   span.ok();
 }
