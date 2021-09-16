@@ -5,6 +5,9 @@ import {
   SpanAttributeValue,
   SpanAttributes,
   SpanStatusCode,
+  Tracer,
+  SpanOptions,
+  Context,
 } from '@opentelemetry/api';
 
 /**
@@ -20,6 +23,25 @@ export class Spans {
    */
   static wrap(_span: Span): Spans {
     return new Spans(_span);
+  }
+
+  /**
+   * Start the span with the associated Tracer.
+   *
+   * @param _tracer the tracer to use for the span.
+   * @param _name the span name, required.
+   * @param _opts optional span options.
+   * @param _ctx optional source telemetry context.
+   * @returns
+   */
+  static startSpan(
+    _tracer: Tracer,
+    _name: string,
+    _opts?: SpanOptions,
+    _ctx?: Context
+  ): Spans {
+    let span = _tracer.startSpan(_name, _opts, _ctx);
+    return new Spans(span);
   }
 
   /**

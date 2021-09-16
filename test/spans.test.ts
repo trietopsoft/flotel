@@ -12,6 +12,13 @@ describe('spans', () => {
     spans.ok();
     assert.ok(!span.isRecording());
   });
+  it('produces a span', () => {
+    let provider = new NodeTracerProvider();
+    let span = Spans.startSpan(provider.getTracer('default'), 'my-span');
+    assert.ok(span.current().isRecording());
+    span.ok();
+    assert.ok(!span.current().isRecording());
+  });
   it('throws the error', () => {
     let provider = new NodeTracerProvider();
     const span = provider.getTracer('default').startSpan('error-span');
