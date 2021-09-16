@@ -8,28 +8,31 @@ import {
 } from '@opentelemetry/api';
 
 /**
- * 
+ * Fluent wrapper for OpenTelemetry Span, includes convenience methods for
+ * ending the span with associated status (OK, ERROR).
  */
 export class Spans {
-
   /**
-   * 
-   * @param _span 
-   * @returns 
+   * Wrap the span, static accessor.
+   *
+   * @param _span the original span
+   * @returns the fluent wrapper
    */
-  static wrap(_span: Span) : Spans {
+  static wrap(_span: Span): Spans {
     return new Spans(_span);
   }
 
   /**
-   * 
-   * @param _span 
+   * Wrap the span.
+   *
+   * @param _span the original span
    */
   constructor(private _span: Span) {}
 
   /**
-   * 
-   * @returns 
+   * Get the original span.
+   *
+   * @returns the original span
    */
   current(): Span {
     return this._span;
@@ -90,11 +93,13 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param end 
-   * @param _message 
-   * @param _time 
-   * @returns 
+   * Set the OK status for the span with an optional end and time parameter.
+   * Message will be set on the span status.
+   *
+   * @param end if true (default), ends the span.
+   * @param _message optional status message.
+   * @param _time optional end time.
+   * @returns the fluent wrapper
    */
   ok(end: boolean = true, _message?: string, _time?: TimeInput): this {
     this._span.setStatus({ code: SpanStatusCode.OK, message: _message });
@@ -103,11 +108,13 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param _message 
-   * @param end 
-   * @param _time 
-   * @returns 
+   * Set the ERROR status for the span with an optional end and time parameter.
+   * Message will be set on the span status but no error will be thrown.
+   *
+   * @param _message optional error message.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
+   * @returns the fluent wrapper
    */
   error(_message?: string, end: boolean = true, _time?: TimeInput): this {
     this._span.setStatus({ code: SpanStatusCode.ERROR, message: _message });
@@ -116,14 +123,17 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param _message 
-   * @param errorType 
-   * @param end 
-   * @param _time 
+   * Set the ERROR status for the span with an optional end and time parameter.
+   * Message will be used with the associated errorType to raise an exception.
+   * This method does not return normally.
+   *
+   * @param _message error message, required.
+   * @param errorType type of exception, default is Error.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
    */
   doError(
-    _message?: string,
+    _message: string,
     errorType: any = Error,
     end: boolean = true,
     _time?: TimeInput
@@ -134,11 +144,14 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param _exception 
-   * @param end 
-   * @param _time 
-   * @returns 
+   * Set the ERROR status for the span with an optional end and time parameter.
+   * The exception will not be thrown once the span status has been set.
+   * The exception will be recorded in the span if provided.
+   *
+   * @param _exception optional associated exception.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
+   * @returns the fluent wrapper
    */
   exception(
     _exception?: Exception,
@@ -154,10 +167,14 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param _exception 
-   * @param end 
-   * @param _time 
+   * Set the ERROR status for the span with an optional end and time parameter.
+   * The exception WILL be thrown once the span status has been set.
+   * The exception will be recorded in the span.
+   * This method does not return normally.
+   *
+   * @param _exception associated exception.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
    */
   doThrow(_exception: Exception, end: boolean = true, _time?: TimeInput): void {
     this._span.recordException(_exception, _time);
@@ -167,10 +184,11 @@ export class Spans {
   }
 
   /**
-   * 
-   * @param _autoEnd 
-   * @param _time 
-   * @returns 
+   * End the span with optional time input.
+   *
+   * @param _autoEnd optional flag to end the span, redundant for fluent access.
+   * @param _time optional end time.
+   * @returns the fluent wrapper
    */
   end(_autoEnd: boolean = true, _time?: TimeInput): this {
     if (_autoEnd) {
