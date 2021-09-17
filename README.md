@@ -62,7 +62,7 @@ Return an error with an inline check using a custom exception type.  Will automa
 }
 ```
 
-REturn the caught exception with an ended span.  Will automatically record the exception and end the span:
+Return the caught exception with an ended span.  Will automatically record the exception and end the span:
 
 ```javascript
 {
@@ -122,7 +122,9 @@ npm install @trietop/flotel
 ```
 
 OpenTelemetry API Compliance:
-* '@opentelemetry/api': ^1.0.3
+```
+'@opentelemetry/api': ^1.0.3
+```
 
 ## Development
 
