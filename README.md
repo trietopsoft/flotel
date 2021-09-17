@@ -44,6 +44,39 @@ Re-throw the caught exception with an ended span.  Will automatically record the
 }
 ```
 
+Return an error with an inline check using a custom exception type.  Will automatically record the error and end the span:
+
+```javascript
+{
+  let span = Spans.startSpan(tracer, 'inline-error');
+  try {
+    // Check pre-conditions
+    if (!requiredRef) {
+      throw span.toError('required reference is not available', ReferenceError);
+    }
+    // do stuff
+    span.ok();
+  } catch (e) {
+    // handle the error
+  }
+}
+```
+
+REturn the caught exception with an ended span.  Will automatically record the exception and end the span:
+
+```javascript
+{
+  let span = Spans.startSpan(tracer, 'trap-and-throw');
+  try {
+    // do stuff
+    span.ok();
+  } catch (e) {
+    // Trap and re-throw the exception
+    throw span.toThrow(e);
+  }
+}
+```
+
 Throw an error with an inline check.  Will automatically record the error and end the span:
 
 ```javascript

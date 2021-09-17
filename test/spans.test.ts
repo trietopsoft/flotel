@@ -41,4 +41,13 @@ describe('spans', () => {
     expect(t).toThrow(ReferenceError);
     assert.ok(!span.isRecording());
   });
+  it('return the reference error', () => {
+    let provider = new NodeTracerProvider();
+    const span = provider.getTracer('default').startSpan('error-span');
+    let spans: Spans = new Spans(span);
+    assert.ok(span.isRecording());
+    const err = spans.toError('this is an error message', ReferenceError);
+    expect(err).toStrictEqual(ReferenceError('this is an error message'));
+    assert.ok(!span.isRecording());
+  });
 });

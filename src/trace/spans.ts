@@ -167,6 +167,28 @@ export class Spans {
 
   /**
    * Set the ERROR status for the span with an optional end and time parameter.
+   * Message will be used with the associated errorType to raise an exception.
+   * This method returns the constructed error.
+   *
+   * @param _message error message, required.
+   * @param errorType type of exception, default is Error.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
+   * @return the error object
+   */
+  toError(
+    _message: string,
+    errorType: any = Error,
+    end: boolean = true,
+    _time?: TimeInput
+  ): any {
+    this._span.setStatus({ code: SpanStatusCode.ERROR, message: _message });
+    this.end(end, _time);
+    return errorType(_message);
+  }
+
+  /**
+   * Set the ERROR status for the span with an optional end and time parameter.
    * The exception will not be thrown once the span status has been set.
    * The exception will be recorded in the span if provided.
    *
@@ -203,6 +225,22 @@ export class Spans {
     this._span.setStatus({ code: SpanStatusCode.ERROR });
     this.end(end, _time);
     throw _exception;
+  }
+
+  /**
+   * Set the ERROR status for the span with an optional end and time parameter.
+   * The exception will be recorded in the span.
+   * This method returns the original exception.
+   *
+   * @param _exception associated exception.
+   * @param end if true (default), ends the span.
+   * @param _time optional end time.
+   */
+  toThrow(_exception: Exception, end: boolean = true, _time?: TimeInput): any {
+    this._span.recordException(_exception, _time);
+    this._span.setStatus({ code: SpanStatusCode.ERROR });
+    this.end(end, _time);
+    return _exception;
   }
 
   /**
