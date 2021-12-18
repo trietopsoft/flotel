@@ -1,32 +1,22 @@
 #!/usr/bin/env groovy
 pipeline {
-
     agent any
 
-    /*
-     * Run everything on an existing agent configured with a label 'docker'.
-     * This agent will need docker, git and a jdk installed at a minimum.
-
-    agent {
-        node {
-            label 'docker'
-        }
-    }
-     */
-    // using the Timestamper plugin we can add timestamps to the console log
     options {
         timestamps()
     }
 
-    environment {
-        ARTIFACT = readMavenPom().getArtifactId()
-        VERSION = readMavenPom().getVersion()
+    script {
+        def packageJson = readJSON file: 'package.json'
+        def version = packageJson.version
+
+        echo "Setting build version: ${version}"
+        currentBuild.displayName = env.BUILD_NUMBER + ' - ' + version
     }
 
     stages {
         stage('Install') {
             steps {
-                // using the Pipeline Maven plugin we can set maven configuration settings, publish test results, and annotate the Jenkins console
                 sh 'yarn install'
             }
         }
@@ -42,7 +32,5 @@ pipeline {
                 sh 'yarn test'
             }
         }
-
     }
-
 }
