@@ -6,17 +6,16 @@ pipeline {
         timestamps()
     }
 
-    script {
-        def packageJson = readJSON file: 'package.json'
-        def version = packageJson.version
-
-        echo "Setting build version: ${version}"
-        currentBuild.displayName = env.BUILD_NUMBER + ' - ' + version
-    }
-
     stages {
         stage('Install') {
             steps {
+                    script {
+                        packageJson = readJSON file: 'package.json'
+                        version = packageJson.version
+
+                        echo "Setting build version: ${version}"
+                        currentBuild.displayName = env.BUILD_NUMBER + ' - ' + version
+                    }
                 sh 'yarn install'
             }
         }
