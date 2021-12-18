@@ -8,6 +8,7 @@ import {
   Tracer,
   SpanOptions,
   Context,
+  SpanContext,
 } from '@opentelemetry/api';
 
 /**
@@ -58,6 +59,15 @@ export class Spans {
    */
   current(): Span {
     return this._span;
+  }
+
+  /**
+   * Get the span's context.
+   *
+   * @returns the span context
+   */
+  spanContext(): SpanContext {
+    return this._span.spanContext();
   }
 
   /**

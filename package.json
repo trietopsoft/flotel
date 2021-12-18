@@ -30,11 +30,10 @@
   },
   "scripts": {
     "jest": "jest",
-    "tsdx": "tsdx --help",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src test",
     "prepare": "tsc",
     "size": "size-limit",
     "analyze": "size-limit --why"
