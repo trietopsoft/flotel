@@ -1,8 +1,24 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent {
-        docker { image 'node:16.13.1-alpine' }
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            package: flotel
+        spec:
+          containers:
+          - name: node
+            image: node:lts-stretch
+            command:
+            - sleep
+            args:
+            - 99d
+        '''
     }
+  }
 
     options {
         timestamps()
@@ -11,6 +27,7 @@ pipeline {
     stages {
         stage('Install') {
             steps {
+                container('node') {
                     script {
                         packageJson = readJSON file: 'package.json'
                         version = packageJson.version
@@ -18,19 +35,24 @@ pipeline {
                         echo "Setting build version: ${version}"
                         currentBuild.displayName = env.BUILD_NUMBER + ' - ' + version
                     }
-                sh 'yarn install'
+                    sh 'yarn install'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                sh 'yarn build'
+                container('node') {
+                    sh 'yarn build'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'yarn test'
+                container('node') {
+                    sh 'yarn test'
+                }
             }
         }
     }
